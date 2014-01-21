@@ -59,6 +59,14 @@ msgstr ""
 msgid "You are now registered. You will soon recieve and email with a link to confirm your registration."
 msgstr ""
 
+#: os2web_subscription.module:279
+msgid "Subscribe to this type of content."
+msgstr ""
+
+#: os2web_subscription.module:280
+msgid "Subscribe by entering your Email and submit. When new content of a this type is created, you will recieve an email."
+msgstr ""
+
 #: os2web_subscription.module:288
 msgid "Save subscription"
 msgstr ""

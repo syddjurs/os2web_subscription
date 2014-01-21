@@ -273,17 +273,24 @@ function os2web_subscription_add_subscription_form($form, &$form_submit) {
     $node = node_load($nid);
 
     if (in_array($node->type, os2web_subscription_get_node_types())) {
-      $form['email'] = array(
+
+      $form['os2web_subscription_group'] = array(
+        '#type' => 'fieldset',
+        '#title' => t('Subscribe to this type of content.'),
+        '#description' => t('Subscribe by entering your Email and submit. When new content of a this type is created, you will recieve an email.'),
+      );
+
+      $form['os2web_subscription_group']['email'] = array(
         '#type' => 'textfield',
         '#title' => t('Your Email'),
         '#required' => TRUE,
         '#element_validate' => array('os2web_subscription_add_subscription_form_email_validate'),
       );
-      $form['category'] = array(
+      $form['os2web_subscription_group']['category'] = array(
         '#type' => 'hidden',
         '#value' => $node->type,
       );
-      $form['submit'] = array(
+      $form['os2web_subscription_group']['submit'] = array(
         '#type' => 'submit',
         '#value' => t('Save subscription'),
         '#ajax' => array(
