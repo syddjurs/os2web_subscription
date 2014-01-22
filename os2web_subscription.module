@@ -158,6 +158,7 @@ function os2web_subscription_block_info() {
   $blocks = array();
   $blocks['os2web_subscription_add'] = array(
     'info' => t('OS2web Subscriptions - Add subscription'),
+    'cache' => DRUPAL_NO_CACHE
   );
 
   return $blocks;
