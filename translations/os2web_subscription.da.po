@@ -60,12 +60,12 @@ msgid "You are now registered. You will soon recieve and email with a link to co
 msgstr "Du er nu oprettet. Du vil snarest modtage en email med et link til at bekræfte din tilmelding."
 
 #: os2web_subscription.module:279
-msgid "Subscribe to this type of content."
-msgstr "Abonner på denne type indhold."
+msgid "Subscribe to !category"
+msgstr "Abonner på !category"
 
 #: os2web_subscription.module:280
-msgid "Subscribe by entering your Email and submit. When new content of a this type is created, you will recieve an email."
-msgstr "Abonner ved at indtaste din Email og tryk Gem Tilmelding. Når nyt indhold fra en kategorí er oprettet, vil du modtage en mail."
+msgid "Subscribe to !category by entering your Email and submit. When new content of a this type is created, you will recieve an email"
+msgstr "Vil du abonnere på !category? – Tilmeld dig vores automatisk nyhedsmail - så får du en mail hver gang siden opdateres."
 
 #: os2web_subscription.module:288
 msgid "Save subscription"

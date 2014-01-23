@@ -64,7 +64,7 @@ msgid "Subscribe to this type of content."
 msgstr ""
 
 #: os2web_subscription.module:280
-msgid "Subscribe by entering your Email and submit. When new content of a this type is created, you will recieve an email."
+msgid "Subscribe to !category by entering your Email and submit. When new content of a this type is created, you will recieve an email"
 msgstr ""
 
 #: os2web_subscription.module:288
