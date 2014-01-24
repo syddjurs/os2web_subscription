@@ -4,3 +4,5 @@ package = OS2Web - Frontend
 php = 5.2.4
 version = 7.x-1.0
 project = os2web_subscription
+
+files[] = "inc/Os2webSubscriptionMailSystem.class.php"
