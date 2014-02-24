@@ -375,7 +375,8 @@ function os2web_subscription_cron() {
   // Create the links to new content.
   foreach ($new_nodes as $node) {
     if (isset($categories[$node['category']])) {
-      $categories_nodes[$node['category']][$node['nid']] = $node['title'] . ' (' . url('node/' . $node['nid'], array('absolute' => TRUE)) . ')';
+      $url = url('node/' . $node['nid'], array('absolute' => TRUE));
+      $categories_nodes[$node['category']][$node['nid']] = l($node['title'], $url) . ' (' . l($url, $url) . ')';
     }
   }
 
@@ -423,8 +424,7 @@ function os2web_subscription_mail($key, &$message, $params) {
 
   switch ($key) {
     case 'subscription':
-      $message['headers']['MIME-Version'] = '1.0';
-      $message['headers']['Content-Type'] = 'text/plain;charset=utf-8';
+      $message['headers']['Content-Type'] = 'text/html; charset=UTF-8;';
       $message['subject'] = t('New "!category" notification for !email from !sitename', array(
         '!category' => variable_get('os2web_subscription_title_' . $params['category'], $params['category']),
         '!email' => $email,
@@ -441,21 +441,24 @@ function os2web_subscription_mail($key, &$message, $params) {
         $message['body'][] = ' - ' . $link;
       }
 
-      $message['body'][] = "-- \n" .
-        t('This is an automatic e-mail from !sitename.',
-          array('!sitename' => variable_get('site_name', 'Drupal'))) . "\n" .
-        t('To stop receiving notifications for "!category", click the opt-out link: !notify-url', array(
-          '!category' => variable_get('os2web_subscription_title_' . $params['category'], $params['category']),
-          '!notify-url' => url('os2web-subscription/opt-out/' . $params['code'] . '/all', array('absolute' => TRUE)),
-        )) . "\n" .
-        t('Stop all emails from the subscription service by clicking: !notify-url', array(
-          '!notify-url' => url('os2web-subscription/opt-out/' . $params['code'], array('absolute' => TRUE)),
-        ));
+      $message['body'][] = "-- \n";
+
+      $message['body'][] = t('This is an automatic e-mail from !sitename.',
+        array('!sitename' => variable_get('site_name', 'Drupal'))
+      );
+
+      $message['body'][] = t('To stop receiving notifications for "!category", click the opt-out link: <a href="!notify-url">!notify-url</a>', array(
+        '!category' => variable_get('os2web_subscription_title_' . $params['category'], $params['category']),
+        '!notify-url' => url('os2web-subscription/opt-out/' . $params['code'] . '/all', array('absolute' => TRUE)),
+      ));
+
+      $message['body'][] = t('Stop all emails from the subscription service by clicking:  <a href="!notify-url">!notify-url</a>', array(
+        '!notify-url' => url('os2web-subscription/opt-out/' . $params['code'], array('absolute' => TRUE)),
+      ));
       break;
 
     case 'confirm':
-      $message['headers']['MIME-Version'] = '1.0';
-      $message['headers']['Content-Type'] = 'text/plain;charset=utf-8';
+      $message['headers']['Content-Type'] = 'text/html; charset=UTF-8;';
       $message['subject'] = t('Confirm your !category registration on !sitename', array(
         '!category' => variable_get('os2web_subscription_title_' . $params['category'], $params['category']),
         '!sitename' => $sitename,
@@ -464,7 +467,8 @@ function os2web_subscription_mail($key, &$message, $params) {
         '!email' => $email,
         '!category' => variable_get('os2web_subscription_title_' . $params['category'], $params['category']),
       ));
-      $message['body'][] = url('os2web-subscription/confirm/' . $params['code'], array('absolute' => TRUE));
+      $message['body'][] = l(t('Confirm subscription'), 'os2web-subscription/confirm/' . $params['code'], array('absolute' => TRUE)) .
+                          ' - ' . url('os2web-subscription/confirm/' . $params['code'], array('absolute' => TRUE));
 
       $message['body'][] = "-- \n" .
         t('This is an automatic e-mail from !sitename.',
@@ -566,7 +570,7 @@ function os2web_subscription_delete_subscriptions($email) {
  * @param string $category
  *   The category to delete it from. Default NULL= deletes from all.
  */
-function os2web_subscription_delete_from_queue($nid, $category) {
+function os2web_subscription_delete_from_queue($nid, $category = NULL) {
   $query = db_delete('os2web_subscription_queue')
     ->condition('nid', $nid);
 

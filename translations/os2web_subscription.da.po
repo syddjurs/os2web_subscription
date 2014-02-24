@@ -92,12 +92,12 @@ msgid "This is an automatic e-mail from !sitename."
 msgstr "Dette er en automatisk Email fra !sitename."
 
 #: os2web_subscription.module:424
-msgid "To stop receiving notifications for \"!category\", click the opt-out link: !notify-url"
-msgstr "Afmeld dig beskeder fra kategorien \"!category\", klik på afmeld linket: !notify-url"
+msgid "To stop receiving notifications for \"!category\", click the opt-out link: <a href=\"!notify-url\">"
+msgstr "Afmeld dig beskeder fra kategorien \"!category\", klik på afmeld linket: <a href=\"!notify-url\">"
 
 #: os2web_subscription.module:428
-msgid "Stop all emails from the subscription service by clicking: !notify-url"
-msgstr "Stop alle emails fra servicen ved at klikke: !notify-url"
+msgid "Stop all emails from the subscription service by clicking: <a href=\"!notify-url\">"
+msgstr "Stop alle emails fra servicen ved at klikke: <a href=\"!notify-url\">"
 
 #: os2web_subscription.module:436
 msgid "Confirm your !category registration on !sitename"

@@ -11,7 +11,7 @@ class Os2webSubscriptionMailSystem extends DefaultMailSystem {
    * Formats an email.
    */
   public function format(array $message) {
-    $message['body'] = implode("\n\n", $message['body']);
+    $message['body'] = implode("<br /><br />", $message['body']);
     $message['body'] = drupal_wrap_mail($message['body']);
     return $message;
   }
