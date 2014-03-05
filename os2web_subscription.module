@@ -362,21 +362,23 @@ function os2web_subscription_add_subscription_form_ajax_submit($form, $form_stat
     }
 
     foreach ($categories as $category) {
-      os2web_subscription_add_subscription($form_state['values']['email'], $category);
+      if (!empty($category)) {
+        os2web_subscription_add_subscription($form_state['values']['email'], $category);
 
-      $subscription = os2web_subscription_get_subscription_by_email_and_category($form_state['values']['email'], $category, FALSE);
-      if ($subscription) {
-        drupal_mail(
-          'os2web_subscription',
-          'confirm',
-          $subscription['email'],
-          language_default('language'),
-          array(
-            'email' => $subscription['email'],
-            'code' => $subscription['code'],
-            'category' => $subscription['category'],
-          )
-        );
+        $subscription = os2web_subscription_get_subscription_by_email_and_category($form_state['values']['email'], $category, FALSE);
+        if ($subscription) {
+          drupal_mail(
+            'os2web_subscription',
+            'confirm',
+            $subscription['email'],
+            language_default('language'),
+            array(
+              'email' => $subscription['email'],
+              'code' => $subscription['code'],
+              'category' => $subscription['category'],
+            )
+          );
+        }
       }
     }
 
