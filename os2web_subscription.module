@@ -283,59 +283,61 @@ function os2web_subscription_block_add_subscription_form() {
  *   The category to show a form for.
  */
 function os2web_subscription_add_subscription_form($form, &$form_submit, $category, $title = NULL) {
-  if (in_array($category, os2web_subscription_get_node_types())) {
 
-    if (!is_array($category)) {
-      $form['os2web_subscription_group'] = array(
-        '#type' => 'fieldset',
-        '#title' => t('Subscribe to !category.', array(
-          '!category' => variable_get('os2web_subscription_title_' . $category, $category),
-        )),
-        '#description' => t('Subscribe to !category by entering your Email and submit. When new content of a this type is created, you will recieve an email.', array(
-          '!category' => variable_get('os2web_subscription_title_' . $category, $category),
-        )),
-      );
-    } else {
-      $form['os2web_subscription_group'] = array(
-        '#type' => 'fieldset',
-        '#title' => $title ? $title : t('Subscribe'),
-        '#description' => t('Subscribe to categories below by entering your Email and submit. When new content of a this type is created, you will recieve an email.'),
-      );
+  if (!is_array($category)) {
+    if (!in_array($category, os2web_subscription_get_node_types())) {
+      return;
     }
 
-    $form['os2web_subscription_group']['email'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Your Email'),
-      '#required' => TRUE,
-      '#element_validate' => array('os2web_subscription_add_subscription_form_email_validate'),
+    $form['os2web_subscription_group'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Subscribe to !category.', array(
+        '!category' => variable_get('os2web_subscription_title_' . $category, $category),
+      )),
+      '#description' => t('Subscribe to !category by entering your Email and submit. When new content of a this type is created, you will recieve an email.', array(
+        '!category' => variable_get('os2web_subscription_title_' . $category, $category),
+      )),
     );
-    if (is_array($category)) {
-      $options = array();
-      foreach ($category as $single_category) {
-        $options[$single_category] = variable_get('os2web_subscription_title_' . $single_category, $single_category)
-      }
-      $form['os2web_subscription_group']['category'] = array(
-        '#type' => 'checkboxes',
-        '#options' => $options,
-      );
-    } else {
-      $form['os2web_subscription_group']['category'] = array(
-        '#type' => 'hidden',
-        '#value' => $category,
-      );
-    }
-
-    $form['os2web_subscription_group']['submit'] = array(
-      '#type' => 'submit',
-      '#value' => t('Save subscription'),
-      '#ajax' => array(
-        'callback' => 'os2web_subscription_add_subscription_form_ajax_submit',
-        'wrapper' => 'os2web-subscription-add-subscription-form',
-      ),
+  } else {
+    $form['os2web_subscription_group'] = array(
+      '#type' => 'fieldset',
+      '#title' => $title ? $title : t('Subscribe'),
+      '#description' => t('Subscribe to categories below by entering your Email and submit. When new content of a this type is created, you will recieve an email.'),
     );
-
-    return $form;
   }
+
+  $form['os2web_subscription_group']['email'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Your Email'),
+    '#required' => TRUE,
+    '#element_validate' => array('os2web_subscription_add_subscription_form_email_validate'),
+  );
+  if (is_array($category)) {
+    $options = array();
+    foreach ($category as $single_category) {
+      $options[$single_category] = variable_get('os2web_subscription_title_' . $single_category, $single_category);
+    }
+    $form['os2web_subscription_group']['category'] = array(
+      '#type' => 'checkboxes',
+      '#options' => $options,
+    );
+  } else {
+    $form['os2web_subscription_group']['category'] = array(
+      '#type' => 'hidden',
+      '#value' => $category,
+    );
+  }
+
+  $form['os2web_subscription_group']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save subscription'),
+    '#ajax' => array(
+      'callback' => 'os2web_subscription_add_subscription_form_ajax_submit',
+      'wrapper' => 'os2web-subscription-add-subscription-form',
+    ),
+  );
+
+  return $form;
 }
 
 /**
