@@ -401,7 +401,7 @@ function os2web_subscription_cron() {
 
   // Get enabled categories from all modules.
   $categories = module_invoke_all('os2web_subscription_categories');
-
+  $categories_nodes = array();
   // Create the links to new content.
   foreach ($new_nodes as $node) {
     if (isset($categories[$node['category']])) {
