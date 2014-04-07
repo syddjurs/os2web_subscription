@@ -689,7 +689,7 @@ function os2web_subscription_get_new_nodes() {
   $query->join('node', 'n', 'q.nid = n.nid');
   $nodes = $query->fields('q', array('category'))
     ->fields('n', array('nid', 'type', 'title'))
-    ->condition('n.type', $categories, 'IN')
+    ->condition('q.category', $categories, 'IN')
     ->condition('n.status', 1)
     ->orderBy('n.created', 'ASC')
     ->execute()
