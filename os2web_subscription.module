@@ -141,7 +141,18 @@ function os2web_subscription_confirm_subscription($code) {
     ))
     ->condition('code', $code)
     ->execute();
-  drupal_goto('your-subscriptions');
+
+  $subscription = db_select('os2web_subscription_subscriptions', 's')
+    ->fields('s', array('email', 'category'))
+    ->condition('code', $code)
+    ->execute()
+    ->fetchAssoc();
+
+  $category = variable_get('os2web_subscription_title_' . $subscription['category'], '');
+
+  return array(
+    '#markup' => t('<h2>You are now subscribing to the category !category.</h2>' array('!category' => $category)),
+  );
 }
 
 /**
