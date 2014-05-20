@@ -29,7 +29,7 @@ function os2web_subscription_menu() {
 
   // Confirm email route.
   $items['os2web-subscription/confirm/%'] = array(
-    'title' => 'OS2Web Subscriptions',
+    'title' => t('Subscription confirmed'),
     'type' => MENU_CALLBACK,
     'page callback' => 'os2web_subscription_confirm_subscription',
     'page arguments' => array(2),
@@ -38,7 +38,7 @@ function os2web_subscription_menu() {
 
   // Form to add categories to an email subscription.
   $items['your-subscriptions'] = array(
-    'title' => 'Get notifications to your email.',
+    'title' => t('Get notifications to your email.'),
     'type' => MENU_CALLBACK,
     'page callback' => 'os2web_subscription_list_subscriptions',
     'access arguments' => array('access content'),
@@ -151,7 +151,7 @@ function os2web_subscription_confirm_subscription($code) {
   $category = variable_get('os2web_subscription_title_' . $subscription['category'], '');
 
   return array(
-    '#markup' => t('<h2>You are now subscribing to the category !category.</h2>' array('!category' => $category)),
+    '#markup' => t('<h2>You are now subscribing to the category "!category".</h2>', array('!category' => $category)),
   );
 }
 
