@@ -695,7 +695,8 @@ function os2web_subscription_get_node_types() {
  *   True if category is enabled.
  */
 function os2web_subscription_category_is_enabled($category) {
-  return in_array($category, os2web_subscription_get_node_types());
+  $categories = module_invoke_all('os2web_subscription_categories');
+  return in_array($category, $categories);
 }
 
 
