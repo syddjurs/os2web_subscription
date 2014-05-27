@@ -282,8 +282,12 @@ function os2web_subscription_block_add_subscription_form() {
  * @param string $category
  *   The category to show a form for.
  */
-function os2web_subscription_add_subscription_form($form, &$form_submit, $category) {
-  if (in_array($category, os2web_subscription_get_node_types())) {
+function os2web_subscription_add_subscription_form($form, &$form_submit, $category, $title = NULL) {
+
+  if (!is_array($category)) {
+    if (!in_array($category, os2web_subscription_get_node_types())) {
+      return;
+    }
 
     $form['os2web_subscription_group'] = array(
       '#type' => 'fieldset',
@@ -294,30 +298,46 @@ function os2web_subscription_add_subscription_form($form, &$form_submit, $catego
         '!category' => variable_get('os2web_subscription_title_' . $category, $category),
       )),
     );
-
-    $form['os2web_subscription_group']['email'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Your Email'),
-      '#required' => TRUE,
-      '#element_validate' => array('os2web_subscription_add_subscription_form_email_validate'),
+  } else {
+    $form['os2web_subscription_group'] = array(
+      '#type' => 'fieldset',
+      '#title' => $title ? $title : t('Subscribe'),
+      '#description' => t('Subscribe to categories below by entering your Email and submit. When new content of a this type is created, you will recieve an email.'),
     );
+  }
 
+  $form['os2web_subscription_group']['email'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Your Email'),
+    '#required' => TRUE,
+    '#element_validate' => array('os2web_subscription_add_subscription_form_email_validate'),
+  );
+  if (is_array($category)) {
+    $options = array();
+    foreach ($category as $single_category) {
+      $options[$single_category] = variable_get('os2web_subscription_title_' . $single_category, $single_category);
+    }
+    $form['os2web_subscription_group']['category'] = array(
+      '#type' => 'checkboxes',
+      '#options' => $options,
+    );
+  } else {
     $form['os2web_subscription_group']['category'] = array(
       '#type' => 'hidden',
       '#value' => $category,
     );
-
-    $form['os2web_subscription_group']['submit'] = array(
-      '#type' => 'submit',
-      '#value' => t('Save subscription'),
-      '#ajax' => array(
-        'callback' => 'os2web_subscription_add_subscription_form_ajax_submit',
-        'wrapper' => 'os2web-subscription-add-subscription-form',
-      ),
-    );
-
-    return $form;
   }
+
+  $form['os2web_subscription_group']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save subscription'),
+    '#ajax' => array(
+      'callback' => 'os2web_subscription_add_subscription_form_ajax_submit',
+      'wrapper' => 'os2web-subscription-add-subscription-form',
+    ),
+  );
+
+  return $form;
 }
 
 /**
@@ -335,21 +355,31 @@ function os2web_subscription_add_subscription_form_email_validate($element, &$fo
  */
 function os2web_subscription_add_subscription_form_ajax_submit($form, $form_state) {
   if (!form_get_errors()) {
-    os2web_subscription_add_subscription($form_state['values']['email'], $form_state['values']['category']);
 
-    $subscription = os2web_subscription_get_subscription_by_email_and_category($form_state['values']['email'], $form_state['values']['category'], FALSE);
-    if ($subscription) {
-      drupal_mail(
-        'os2web_subscription',
-        'confirm',
-        $subscription['email'],
-        language_default('language'),
-        array(
-          'email' => $subscription['email'],
-          'code' => $subscription['code'],
-          'category' => $subscription['category'],
-        )
-      );
+    $categories = $form_state['values']['category'];
+    if (!is_array($categories)) {
+      $categories = array($form_state['values']['category']);
+    }
+
+    foreach ($categories as $category) {
+      if (!empty($category)) {
+        os2web_subscription_add_subscription($form_state['values']['email'], $category);
+
+        $subscription = os2web_subscription_get_subscription_by_email_and_category($form_state['values']['email'], $category, FALSE);
+        if ($subscription) {
+          drupal_mail(
+            'os2web_subscription',
+            'confirm',
+            $subscription['email'],
+            language_default('language'),
+            array(
+              'email' => $subscription['email'],
+              'code' => $subscription['code'],
+              'category' => $subscription['category'],
+            )
+          );
+        }
+      }
     }
 
     return t('You are now registered. You will soon recieve and email with a link to confirm your registration.');
@@ -371,7 +401,7 @@ function os2web_subscription_cron() {
 
   // Get enabled categories from all modules.
   $categories = module_invoke_all('os2web_subscription_categories');
-
+  $categories_nodes = array();
   // Create the links to new content.
   foreach ($new_nodes as $node) {
     if (isset($categories[$node['category']])) {
@@ -659,7 +689,7 @@ function os2web_subscription_get_new_nodes() {
   $query->join('node', 'n', 'q.nid = n.nid');
   $nodes = $query->fields('q', array('category'))
     ->fields('n', array('nid', 'type', 'title'))
-    ->condition('n.type', $categories, 'IN')
+    ->condition('q.category', $categories, 'IN')
     ->condition('n.status', 1)
     ->orderBy('n.created', 'ASC')
     ->execute()
