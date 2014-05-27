@@ -148,10 +148,19 @@ function os2web_subscription_confirm_subscription($code) {
     ->execute()
     ->fetchAssoc();
 
+  $all_subscriptions = os2web_subscription_get_subscriptions_by_email($subscription['email']);
+
+  $items = array();
+  foreach ($all_subscriptions as $category) {
+    $items[] = variable_get('os2web_subscription_title_' . $category['category'], '');
+  }
+
+  $list = theme('item_list', array('items' => $items, 'title' => t('These categories are you currently following.')));
+
   $category = variable_get('os2web_subscription_title_' . $subscription['category'], '');
 
   return array(
-    '#markup' => t('<h2>You are now subscribing to the category "!category".</h2>', array('!category' => $category)),
+    '#markup' => t('<h2>You are now subscribing to the category "!category".</h2>', array('!category' => $category)) . $list,
   );
 }
 
