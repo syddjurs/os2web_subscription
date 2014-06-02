@@ -29,7 +29,7 @@ function os2web_subscription_menu() {
 
   // Confirm email route.
   $items['os2web-subscription/confirm/%'] = array(
-    'title' => 'OS2Web Subscriptions',
+    'title' => t('Subscription confirmed'),
     'type' => MENU_CALLBACK,
     'page callback' => 'os2web_subscription_confirm_subscription',
     'page arguments' => array(2),
@@ -38,7 +38,7 @@ function os2web_subscription_menu() {
 
   // Form to add categories to an email subscription.
   $items['your-subscriptions'] = array(
-    'title' => 'Get notifications to your email.',
+    'title' => t('Get notifications to your email.'),
     'type' => MENU_CALLBACK,
     'page callback' => 'os2web_subscription_list_subscriptions',
     'access arguments' => array('access content'),
@@ -141,7 +141,27 @@ function os2web_subscription_confirm_subscription($code) {
     ))
     ->condition('code', $code)
     ->execute();
-  drupal_goto('your-subscriptions');
+
+  $subscription = db_select('os2web_subscription_subscriptions', 's')
+    ->fields('s', array('email', 'category'))
+    ->condition('code', $code)
+    ->execute()
+    ->fetchAssoc();
+
+  $all_subscriptions = os2web_subscription_get_subscriptions_by_email($subscription['email']);
+
+  $items = array();
+  foreach ($all_subscriptions as $category) {
+    $items[] = variable_get('os2web_subscription_title_' . $category['category'], '');
+  }
+
+  $list = theme('item_list', array('items' => $items, 'title' => t('These categories are you currently following.')));
+
+  $category = variable_get('os2web_subscription_title_' . $subscription['category'], '');
+
+  return array(
+    '#markup' => t('<h2>You are now subscribing to the category "!category".</h2>', array('!category' => $category)) . $list,
+  );
 }
 
 /**
